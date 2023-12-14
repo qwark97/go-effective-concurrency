@@ -96,7 +96,7 @@ func processor(ctx context.Context, id int, inputCh chan Data) {
 		select {
 		case <-ctx.Done():
 			return
-		case data, ok := <-inputCh: // when reading like tha, last value will be empty
+		case data, ok := <-inputCh: // when reading like this, last value will be empty
 			if !ok {
 				return
 			}
