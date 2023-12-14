@@ -39,8 +39,16 @@
     d. żeby sterować przepływami w Go należy wykorzystać kontekst
     e. w tym wypadku sprawa jest prosta, przed wyslaniem danych sprawdzamy czy kontekst jest okej
     f. w realnym przykladzie robilibysmy I/O z użyciem kontekstu
+    g. kazdy kod, który robi blokujące operaecje I/O musi mieć opcje z kontekstem
 
 DOBRE PRAKTYKI CONCURRENCY / PODSUMOWANIE:
 - nie wolno siać gorutynami bez kontroli nad nimi
 - context jest przyjacielem
-- ...
+- Don't communicate by sharing memory; share memory by communicating. (R. Pike) -> inne języki locki, Go kanały
+- klasyczne rozwiązania są (paczka sync) ale idiomatycznie i z reguły lepiej jest kanałami
+- tylko właściciel powinien zamykać kanały
+- error to wartość jak kazda, mozna nim zarządzac
+- współbieznośc nie zawsze jest najlepsza (np. batching w mongo, a nie wiele operacji na raz)
+- trzeba wybierać odpowiednie narzędzia do działania
+
+BONUS JEŚLI JEST CZAS
