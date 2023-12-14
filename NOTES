@@ -1,0 +1,46 @@
+1. Przedstawienie przykładu
+    a. ciekawostka że select{} nie działa już
+    b. patern użyty w streamer - WAŻNE, że to publisher zamyka kanały
+    c. kanały nie są buforowane - coś musi z nich czytać
+    c. mamy sync'a przez WaitGroup żeby wyłapać wszystkie błędy
+    d. uruchomienie
+
+2. Problem
+    a. żart o przyjaciołach, nie lubię Rachel
+    b. pokazac kod gdzie jest błąd
+    c. PYTANIE - co tu może pójść nie tak
+    d. uruchomienie
+    e. całość się zatrzymuje, gorutyna i kanały nie są zamykane
+    f. mamy wyciek
+
+3. Niepasujące rozwiązanie - słuchanie na kontekście
+    a. pokazać co się zmieniło - kontekst
+    b. to w niczym nie pomaga
+    c. uruchomienie
+    d. kod jest tylko bardziej skomplikowany
+    e. słuchanie na kontekście w ten sposób jest do I/O
+
+4. Pierwsze rozwiązanie
+    a. pokazać zmiany - zbieranie błędów
+    b. potem można je złączyć (każdy błąd będzie rozpoznawalny)
+    c. uruchomienie
+    d. PROBLEM - to zmienia zachowanie, bo błąd nie spowoduje przerwania operacji (NIE MOŻE)
+
+5. Drugie rozwiązanie
+    a. pokazać zmiane - wysycanie kanału
+    b. uruchomienie
+    c. problem rozwiązany - przetwarzanie przerwane, nie ma wycieku
+    d. to jest sugerowane przeze mnie rozwiązanie W TYM KONTEKŚCIE
+
+6. Lepsze rozwiąznie
+    a. omawiany przykład jest trywialny
+    b. w praktyce nie chcielibyśmy żeby pomimo błędu dane były wciąż zasysane
+    c. drain to tylko cleanup, niekoniecznie docelowe rozwiązanie
+    d. żeby sterować przepływami w Go należy wykorzystać kontekst
+    e. w tym wypadku sprawa jest prosta, przed wyslaniem danych sprawdzamy czy kontekst jest okej
+    f. w realnym przykladzie robilibysmy I/O z użyciem kontekstu
+
+DOBRE PRAKTYKI CONCURRENCY / PODSUMOWANIE:
+- nie wolno siać gorutynami bez kontroli nad nimi
+- context jest przyjacielem
+- ...
