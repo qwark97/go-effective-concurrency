@@ -44,6 +44,7 @@ func worker() error {
 	wg.Add(1)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	dataCh, errCh := streamer(ctx)
 	go func() {
@@ -52,8 +53,6 @@ func worker() error {
 			log.Printf("(worker) ERR: err from stream: %v", err)
 		}
 	}()
-	defer drain(dataCh)
-	defer cancel()
 
 	i := 0
 	for data := range dataCh {
@@ -68,11 +67,6 @@ func worker() error {
 	return nil
 }
 
-func drain[T any](channel <-chan T) {
-	for range channel {
-	}
-}
-
 func streamer(ctx context.Context) (chan Data, chan error) {
 	var (
 		dataCh = make(chan Data)
@@ -83,6 +77,7 @@ func streamer(ctx context.Context) (chan Data, chan error) {
 		defer close(dataCh)
 		defer close(errCh)
 
+	LOOP:
 		for idx, d := range dataSets {
 			if ctx.Err() != nil {
 				break
@@ -95,8 +90,13 @@ func streamer(ctx context.Context) (chan Data, chan error) {
 			}
 
 			log.Printf("(streamer) INFO: waiting to send idx %d", idx)
-			dataCh <- container
-			log.Printf("(streamer) INFO: sent idx %d", idx)
+
+			select {
+			case <-ctx.Done():
+				break LOOP
+			case dataCh <- container:
+				log.Printf("(streamer) INFO: sent idx %d", idx)
+			}
 		}
 		log.Printf("(streamer) INFO: finished streaming <---- THE GOAL")
 	}()
